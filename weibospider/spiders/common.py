@@ -88,7 +88,7 @@ def parse_tweet_info(data):
     解析推文数据
     """
     tweet = {
-        "_id": str(data['mid']),
+        "mid": str(data['mid']),
         "mblogid": data['mblogid'],
         "created_at": parse_time(data['created_at']),
         "geo": data['geo'],
