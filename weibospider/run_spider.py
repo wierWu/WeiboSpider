@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # encoding: utf-8
 """
 Author: nghuyong
@@ -17,9 +17,11 @@ from spiders.follower import FollowerSpider
 from spiders.user import UserSpider
 from spiders.fan import FanSpider
 from spiders.repost import RepostSpider
+from spiders.top import TopSpider
 
 if __name__ == '__main__':
     mode = sys.argv[1]
+    mode='top'
     os.environ['SCRAPY_SETTINGS_MODULE'] = 'settings'
     settings = get_project_settings()
     process = CrawlerProcess(settings)
@@ -32,6 +34,7 @@ if __name__ == '__main__':
         'tweet_by_tweet_id': TweetSpiderByTweetID,
         'tweet_by_user_id': TweetSpiderByUserID,
         'tweet_by_keyword': TweetSpiderByKeyword,
+        'top': TopSpider
     }
     process.crawl(mode_to_spider[mode])
     # the script will block here until the crawling is finished

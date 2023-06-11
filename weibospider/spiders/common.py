@@ -64,6 +64,7 @@ def parse_user_info(data):
     # 基础信息
     user = {
         "_id": str(data['id']),
+        "type":"user",
         "avatar_hd": data['avatar_hd'],
         "nick_name": data['screen_name'],
         "verified": data['verified'],
@@ -89,20 +90,28 @@ def parse_tweet_info(data):
     """
     tweet = {
         "mid": str(data['mid']),
-        "mblogid": data['mblogid'],
+        "type":"content",
+        # "mblogid": data['mblogid'],
         "created_at": parse_time(data['created_at']),
-        "geo": data['geo'],
-        "ip_location": data.get('region_name', None),
+        # "geo": data['geo'],
+        # "ip_location": data.get('region_name', None),
         "reposts_count": data['reposts_count'],
         "comments_count": data['comments_count'],
         "attitudes_count": data['attitudes_count'],
         "source": data['source'],
-        "content": data['text_raw'].replace('\u200b', ''),
+        # "content": data['text_raw'].replace('\u200b', ''),
         "pic_urls": ["https://wx1.sinaimg.cn/orj960/" + pic_id for pic_id in data.get('pic_ids', [])],
         "pic_num": data['pic_num'],
         'isLongText': False,
         "user": parse_user_info(data['user']),
     }
+    if 'mblogid' in data:
+        tweet['mblogid'] = data['mblogid']
+    if 'text_raw' in data:
+        tweet['content'] =  data['text_raw'].replace('\u200b', '')
+    elif 'text' in data:
+          tweet['content'] =  data['text'].replace('\u200b', '')
+
     if '</a>' in tweet['source']:
         tweet['source'] = re.search(r'>(.*?)</a>', tweet['source']).group(1)
     if 'page_info' in data and data['page_info'].get('object_type', '') == 'video':
@@ -113,7 +122,7 @@ def parse_tweet_info(data):
             media_info = data['page_info']['cards'][0]['media_info']
         if media_info:
             tweet['video'] = media_info['stream_url']
-    tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
+    # tweet['url'] = f"https://weibo.com/{tweet['user']['_id']}/{tweet['mblogid']}"
     if 'continue_tag' in data and data['isLongText']:
         tweet['isLongText'] = True
     return tweet
